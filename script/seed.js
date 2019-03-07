@@ -1,18 +1,66 @@
 'use strict'
 
 const db = require('../server/db')
-const {User} = require('../server/db/models')
+const {Account, User, Task} = require('../server/db/models')
 
 async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  const users = await Promise.all([
-    User.create({email: 'cody@email.com', password: '123'}),
-    User.create({email: 'murphy@email.com', password: '123'})
+  const accounts = await Promise.all([
+    Account.create({name: 'Cody', password: '123'}),
+    Account.create({name: 'Murphy', password: '123'})
   ])
 
-  console.log(`seeded ${users.length} users`)
+  const users = await Promise.all([
+    User.create({userName: 'Alice', userNum: 1, accountId: 1}),
+    User.create({userName: 'Bran', userNum: 2, accountId: 1})
+  ])
+
+  const tasks = await Promise.all([
+    Task.create({
+      name: 'Toilet',
+      week: 1,
+      complete: false,
+      notes: 'clean the rim!',
+      frequency: 3,
+      duration: 30,
+      totalTime: 90,
+      accountId: 1
+    }),
+    Task.create({
+      name: 'Dishes',
+      week: 1,
+      complete: false,
+      notes: 'use organic soap',
+      frequency: 1,
+      duration: 20,
+      totalTime: 20,
+      accountId: 1
+    }),
+    Task.create({
+      name: 'Garbage',
+      week: 1,
+      complete: false,
+      notes: 'remember to wash hands',
+      frequency: 1,
+      duration: 20,
+      totalTime: 20,
+      accountId: 1
+    }),
+    Task.create({
+      name: 'Pickup kids',
+      week: 1,
+      complete: false,
+      notes: 'Little Jimmy from Kindergarten at 3pm',
+      frequency: 1,
+      duration: 20,
+      totalTime: 20,
+      accountId: 1
+    })
+  ])
+
+  console.log(`seeded ${accounts.length} accounts`)
   console.log(`seeded successfully`)
 }
 

@@ -13,10 +13,10 @@ const AuthForm = props => {
     <div>
       <form onSubmit={handleSubmit} name={name}>
         <div>
-          <label htmlFor="email">
-            <small>Email</small>
+          <label htmlFor="accountName">
+            <small>Account Name</small>
           </label>
-          <input name="email" type="text" />
+          <input name="accountName" type="text" />
         </div>
         <div>
           <label htmlFor="password">
@@ -24,12 +24,29 @@ const AuthForm = props => {
           </label>
           <input name="password" type="password" />
         </div>
+        {name === 'signup' ? (
+          <div>
+            <div>
+              <label htmlFor="user1">
+                <small>User 1</small>
+              </label>
+              <input name="user1" type="text" />
+            </div>
+            <div>
+              <label htmlFor="user2">
+                <small>User 2</small>
+              </label>
+              <input name="user2" type="text" />
+            </div>{' '}
+          </div>
+        ) : (
+          <div />
+        )}
         <div>
           <button type="submit">{displayName}</button>
         </div>
         {error && error.response && <div> {error.response.data} </div>}
       </form>
-      <a href="/auth/google">{displayName} with Google</a>
     </div>
   )
 }
@@ -45,7 +62,7 @@ const mapLogin = state => {
   return {
     name: 'login',
     displayName: 'Login',
-    error: state.user.error
+    error: state.account.error
   }
 }
 
@@ -53,7 +70,7 @@ const mapSignup = state => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
-    error: state.user.error
+    error: state.account.error
   }
 }
 
@@ -62,9 +79,11 @@ const mapDispatch = dispatch => {
     handleSubmit(evt) {
       evt.preventDefault()
       const formName = evt.target.name
-      const email = evt.target.email.value
+      const accountName = evt.target.accountName.value
       const password = evt.target.password.value
-      dispatch(auth(email, password, formName))
+      const user1 = evt.target.user1 ? evt.target.user1.value : ''
+      const user2 = evt.target.user2 ? evt.target.user2.value : ''
+      dispatch(auth(accountName, password, formName, user1, user2))
     }
   }
 }

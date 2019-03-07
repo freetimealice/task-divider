@@ -19,3 +19,9 @@ form div {
   margin: 1em;
   display: inline-block;
 }
+
+.users-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}

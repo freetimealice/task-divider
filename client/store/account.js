@@ -4,19 +4,19 @@ import history from '../history'
 /**
  * ACTION TYPES
  */
-const GET_USER = 'GET_USER'
-const REMOVE_USER = 'REMOVE_USER'
+const GET_ACCOUNT = 'GET_ACCOUNT'
+const REMOVE_ACCOUNT = 'REMOVE_ACCOUNT'
 
 /**
  * INITIAL STATE
  */
-const defaultUser = {}
+const defaultAccount = {}
 
 /**
  * ACTION CREATORS
  */
-const getUser = user => ({type: GET_USER, user})
-const removeUser = () => ({type: REMOVE_USER})
+const getAccount = account => ({type: GET_ACCOUNT, account})
+const removeAccount = () => ({type: REMOVE_ACCOUNT})
 
 /**
  * THUNK CREATORS
@@ -24,22 +24,28 @@ const removeUser = () => ({type: REMOVE_USER})
 export const me = () => async dispatch => {
   try {
     const res = await axios.get('/auth/me')
-    dispatch(getUser(res.data || defaultUser))
+    dispatch(getAccount(res.data || defaultAccount))
   } catch (err) {
     console.error(err)
   }
 }
 
-export const auth = (email, password, method) => async dispatch => {
+export const auth = (
+  name,
+  password,
+  method,
+  user1,
+  user2
+) => async dispatch => {
   let res
   try {
-    res = await axios.post(`/auth/${method}`, {email, password})
+    res = await axios.post(`/auth/${method}`, {name, password, user1, user2})
   } catch (authError) {
-    return dispatch(getUser({error: authError}))
+    return dispatch(getAccount({error: authError}))
   }
 
   try {
-    dispatch(getUser(res.data))
+    dispatch(getAccount(res.data))
     history.push('/home')
   } catch (dispatchOrHistoryErr) {
     console.error(dispatchOrHistoryErr)
@@ -49,7 +55,7 @@ export const auth = (email, password, method) => async dispatch => {
 export const logout = () => async dispatch => {
   try {
     await axios.post('/auth/logout')
-    dispatch(removeUser())
+    dispatch(removeAccount())
     history.push('/login')
   } catch (err) {
     console.error(err)
@@ -59,12 +65,12 @@ export const logout = () => async dispatch => {
 /**
  * REDUCER
  */
-export default function(state = defaultUser, action) {
+export default function(state = defaultAccount, action) {
   switch (action.type) {
-    case GET_USER:
-      return action.user
-    case REMOVE_USER:
-      return defaultUser
+    case GET_ACCOUNT:
+      return action.account
+    case REMOVE_ACCOUNT:
+      return defaultAccount
     default:
       return state
   }
