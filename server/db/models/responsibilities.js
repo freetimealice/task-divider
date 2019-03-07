@@ -3,7 +3,10 @@ const db = require('../db')
 
 const Responsibilities = db.define('responsibilities', {
   ranking: Sequelize.INTEGER,
-  taskName: Sequelize.STRING
+  taskName: Sequelize.STRING,
+  week: Sequelize.INTEGER,
+  userNum: Sequelize.INTEGER,
+  accountId: Sequelize.INTEGER
 })
 
 module.exports = Responsibilities

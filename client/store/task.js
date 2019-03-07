@@ -45,7 +45,10 @@ export const fetchTasks = (accountId, week) => {
   return async dispatch => {
     try {
       const {data} = await axios.get(`/api/tasks/${accountId}/${week}`)
-      dispatch(gotTasks(data))
+      const sortedTasks = data.sort(function(a, b) {
+        return b.totalTime - a.totalTime
+      })
+      dispatch(gotTasks(sortedTasks))
       dispatch(fetchLatestWeek(accountId))
     } catch (err) {
       console.error(err)

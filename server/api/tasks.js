@@ -19,6 +19,42 @@ router.get('/latestweek/:accountId', async (req, res, next) => {
   }
 })
 
+router.get('/rank/:accountId/:week', async (req, res, next) => {
+  try {
+    const {week, accountId} = req.params
+    const rankings = await Responsibilities.findAll({
+      where: {
+        week,
+        accountId
+      },
+      attributes: ['userNum', 'ranking', 'taskId']
+    })
+
+    let jsonResult = {}
+
+    const getTaskByOrder = async userNum => {
+      let userRankings = rankings
+        .filter(obj => obj.userNum === userNum)
+        .sort((a, b) => a.ranking > b.ranking)
+
+      let result = []
+
+      for (let i = 0; i < userRankings.length; i++) {
+        let currTaskId = userRankings[i].taskId
+        let taskDetails = await Task.findById(currTaskId)
+        result.push(taskDetails)
+      }
+      return result
+    }
+    jsonResult['UserNum: 1'] = await getTaskByOrder(1)
+    jsonResult['UserNum: 2'] = await getTaskByOrder(2)
+
+    res.json(jsonResult)
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.get('/:accountId/:week', async (req, res, next) => {
   try {
     const allTasks = await Task.findAll({
@@ -76,7 +112,9 @@ router.post('/rank/:userNum', async (req, res, next) => {
         userId: user.id,
         accountId: task.accountId,
         ranking: rankedTaskArr.length - ind,
-        taskName: task.name
+        taskName: task.name,
+        userNum: userNum,
+        week: rankedTaskArr[0].week
       })
     })
 
