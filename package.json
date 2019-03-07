@@ -52,7 +52,7 @@
     "pg-hstore": "^2.3.2",
     "postcss-loader": "^3.0.0",
     "prop-types": "^15.6.2",
-    "react": "^16.4.2",
+    "react": "^16.8.4",
     "react-dice": "^1.0.1",
     "react-dice-complete": "^1.0.2",
     "react-dom": "^16.4.2",

@@ -10,12 +10,14 @@ class ChoreDistribution extends React.Component {
     user1: {
       totalTime: 0,
       tasks: [],
-      rolled: 0
+      rolled: 0,
+      ranked: 0
     },
     user2: {
       totalTime: 0,
       tasks: [],
-      rolled: 0
+      rolled: 0,
+      ranked: 0
     },
     totalTime: 0
   }
@@ -33,22 +35,11 @@ class ChoreDistribution extends React.Component {
       await this.setState({
         fetchedinfo: true
       })
-      // const totalTime = this.props.tasks.reduce((totalT, currTask) => {
-      //   return (currTask.totalTime + totalT)
-      // }, 0)
-      // await this.setState({totalTime})
-      console.log('this.props', this.props)
     }
   }
 
   calculateRandomInt = async userNum => {
-    if (this.state.totalRolls >= this.props.tasks.length) {
-      alert('All tasks have been asigned')
-      return
-    }
-
     const numOfTasks = this.props.tasks.length
-    const taskToAssign = this.props.tasks[this.state.totalRolls]
     const num = Math.floor(Math.random() * numOfTasks) + 1
     //update rolled num
     await this.setState(state => {
@@ -58,6 +49,30 @@ class ChoreDistribution extends React.Component {
     await this.setState(state => {
       return {totalRolls: state.totalRolls + 0.5}
     })
+  }
+
+  calculateRank = async (userNum, task) => {
+    let rankingArr = this.props.ranking[`UserNum: ${userNum}`]
+    let ind = rankingArr.findIndex(currTask => {
+      return currTask.id === task.id
+    })
+    let taskRank = this.props.tasks.length - ind
+    await this.setState(state => {
+      return {
+        [`user${userNum}`]: {...state[`user${userNum}`], ranked: taskRank}
+      }
+    })
+  }
+
+  assignChores = async userNum => {
+    if (this.state.totalRolls >= this.props.tasks.length) {
+      alert('All tasks have been asigned')
+      return false
+    } else {
+      const task = this.props.tasks[this.state.totalRolls]
+      await this.calculateRandomInt(userNum)
+      await this.calculateRank(userNum, task)
+    }
   }
 
   render() {
@@ -76,8 +91,8 @@ class ChoreDistribution extends React.Component {
           <button
             type="submit"
             onClick={() => {
-              this.calculateRandomInt(1)
-              this.calculateRandomInt(2)
+              this.assignChores(1)
+              this.assignChores(2)
             }}
           >
             Roll roll roll!
@@ -87,11 +102,13 @@ class ChoreDistribution extends React.Component {
           <div className="user1">
             <h3>User 1</h3>
             <p>{`You rolled a ${this.state.user1.rolled}`}</p>
+            <p>{`You ranked the task a ${this.state.user1.ranked}`}</p>
           </div>
 
           <div className="user2">
             <h3>User 2</h3>
             <p>{`You rolled a ${this.state.user2.rolled}`}</p>
+            <p>{`You ranked the task a ${this.state.user2.ranked}`}</p>
           </div>
         </div>
       </div>
@@ -116,9 +133,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchLatestWeek(accountId))
   },
   fetchRanks: (accountId, week) => {
-    console.log('fetchingRanks')
-    console.log('accountId', accountId)
-    console.log('week', week)
     dispatch(fetchRanks(accountId, week))
   }
 })
