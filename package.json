@@ -55,7 +55,7 @@
     "react": "^16.8.4",
     "react-dice": "^1.0.1",
     "react-dice-complete": "^1.0.2",
-    "react-dom": "^16.4.2",
+    "react-dom": "^16.8.4",
     "react-materialize": "^2.6.0",
     "react-redux": "^5.0.2",
     "react-router-dom": "^4.3.1",

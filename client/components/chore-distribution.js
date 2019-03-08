@@ -1,123 +1,145 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
 import {fetchTasks, fetchLatestWeek} from '../store/task'
 import {fetchRanks} from '../store/ranking'
 
-class ChoreDistribution extends React.Component {
-  state = {
-    fetchedinfo: false,
-    totalRolls: 0,
-    user1: {
-      totalTime: 0,
-      tasks: [],
-      rolled: 0,
-      ranked: 0
-    },
-    user2: {
-      totalTime: 0,
-      tasks: [],
-      rolled: 0,
-      ranked: 0
-    },
-    totalTime: 0
-  }
+const ChoreDistribution = props => {
+  const [user1, setUser1] = useState({
+    totalTime: 0,
+    tasks: [],
+    rolled: 0,
+    ranked: 0,
+    time: 0,
+    totalPoints: 0
+  })
 
-  componentDidMount() {
-    if (this.state.fetchedinfo === false && this.props.account) {
-      this.props.fetchLatestWeek(this.props.account.id)
-    }
-  }
+  const [user2, setUser2] = useState({
+    totalTime: 0,
+    tasks: [],
+    rolled: 0,
+    ranked: 0,
+    time: 0,
+    totalPoints: 0
+  })
 
-  async componentDidUpdate() {
-    if (this.state.fetchedinfo === false && this.props.account) {
-      await this.props.fetchTasks(this.props.account.id, this.props.week)
-      await this.props.fetchRanks(this.props.account.id, this.props.week)
-      await this.setState({
-        fetchedinfo: true
-      })
-    }
-  }
+  const [totalRolls, setTotalRolls] = useState(0)
+  const [totalTime, setTotalTime] = useState(0)
 
-  calculateRandomInt = async userNum => {
-    const numOfTasks = this.props.tasks.length
-    const num = Math.floor(Math.random() * numOfTasks) + 1
-    //update rolled num
-    await this.setState(state => {
-      return {[`user${userNum}`]: {...state[`user${userNum}`], rolled: num}}
-    })
-    //update totalRolls
-    await this.setState(state => {
-      return {totalRolls: state.totalRolls + 0.5}
-    })
-  }
-
-  calculateRank = async (userNum, task) => {
-    let rankingArr = this.props.ranking[`UserNum: ${userNum}`]
-    let ind = rankingArr.findIndex(currTask => {
-      return currTask.id === task.id
-    })
-    let taskRank = this.props.tasks.length - ind
-    await this.setState(state => {
-      return {
-        [`user${userNum}`]: {...state[`user${userNum}`], ranked: taskRank}
+  useEffect(
+    () => {
+      if (props.tasks.length) {
+        let totTime = props.tasks.reduce((total, task) => {
+          return total + task.totalTime
+        }, 0)
+        setTotalTime(totTime)
+      } else if (props.account && props.week) {
+        props.fetchTasks(props.account.id, props.week)
+        props.fetchRanks(props.account.id, props.week)
+      } else if (props.account) {
+        props.fetchLatestWeek(props.account.id)
       }
-    })
-  }
+    },
+    [props.week, props.tasks]
+  )
 
-  assignChores = async userNum => {
-    if (this.state.totalRolls >= this.props.tasks.length) {
+  const assignChores = (userNum, task) => {
+    setTotalRolls(totalRolls + 1)
+    if (totalRolls >= props.tasks.length) {
       alert('All tasks have been asigned')
       return false
     } else {
-      const task = this.props.tasks[this.state.totalRolls]
-      await this.calculateRandomInt(userNum)
-      await this.calculateRank(userNum, task)
+      const numOfTasks = props.tasks.length
+      //calc RandNum
+      const randNum = Math.floor(Math.random() * numOfTasks) + 1
+      //calc Rank
+      let rankingArr = props.ranking[`UserNum: ${userNum}`]
+      let ind = rankingArr.findIndex(currTask => currTask.id === task.id)
+      let taskRank = props.tasks.length - ind
+      //calcTime
+      let timeModifier = Math.round(
+        numOfTasks * (Math.abs(user1.totalTime - user2.totalTime) / totalTime)
+      )
+      let userWithTimeModifier = user1.totalTime > user2.totalTime ? 1 : 2
+      timeModifier = userNum === userWithTimeModifier ? -timeModifier : 0
+      userNum === 1
+        ? setUser1({
+            ...user1,
+            rolled: randNum,
+            ranked: taskRank,
+            time: timeModifier
+          })
+        : setUser2({
+            ...user2,
+            rolled: randNum,
+            ranked: taskRank,
+            time: timeModifier
+          })
+      return randNum + taskRank + timeModifier
     }
   }
 
-  render() {
-    return this.props.tasks.length ? (
-      <div className="container">
-        <h1 className="center-align"> Which chores will you win?</h1>
-        <div className="all-tasks">
-          {this.props.tasks.map(task => {
-            return (
-              <div className="center-align" key={task.name}>
-                Task Name: {task.name} <br />
-                Total Time: {task.totalTime}
-              </div>
-            )
-          })}
-          <button
-            type="submit"
-            onClick={() => {
-              this.assignChores(1)
-              this.assignChores(2)
-            }}
-          >
-            Roll roll roll!
-          </button>
-        </div>
-        <div className="users-container">
-          <div className="user1">
-            <h3>User 1</h3>
-            <p>{`You rolled a ${this.state.user1.rolled}`}</p>
-            <p>{`You ranked the task a ${this.state.user1.ranked}`}</p>
-          </div>
+  const submitHandler = () => {}
 
-          <div className="user2">
-            <h3>User 2</h3>
-            <p>{`You rolled a ${this.state.user2.rolled}`}</p>
-            <p>{`You ranked the task a ${this.state.user2.ranked}`}</p>
-          </div>
+  return props.week ? (
+    <div className="container">
+      <h1 className="center-align"> Which chores will you win?</h1>
+      <div className="all-tasks">
+        {props.tasks.map(task => {
+          return (
+            <div className="center-align" key={task.name}>
+              Task Name: {task.name} <br />
+              Total Time: {task.totalTime}
+            </div>
+          )
+        })}
+        <button
+          type="submit"
+          onClick={async () => {
+            const currTask = props.tasks[Math.floor(totalRolls)]
+            const user1Points = await assignChores(1, currTask)
+            const user2Points = await assignChores(2, currTask)
+            let winner = ''
+            if (user1Points > user2Points) winner = 1
+            else if (user1Points === user2Points) {
+              winner = Math.floor(Math.random() * 2) + 1
+            } else {
+              winner = 2
+            }
+            winner === 1
+              ? await setUser1({
+                  ...user1,
+                  totalTime: user1.totalTime + currTask.totalTime,
+                  tasks: [...user1.tasks, currTask]
+                })
+              : await setUser2({
+                  ...user2,
+                  totalTime: user2.totalTime + currTask.totalTime,
+                  tasks: [...user2.tasks, currTask]
+                })
+            console.log('winner', winner)
+          }}
+        >
+          Roll roll roll!
+        </button>
+      </div>
+      <div className="users-container">
+        <div className="user1">
+          <h3>User 1</h3>
+          <p>{`You rolled a ${user1.rolled}`}</p>
+          <p>{`You ranked the task a ${user1.ranked}`}</p>
+        </div>
+
+        <div className="user2">
+          <h3>User 2</h3>
+          <p>{`You rolled a ${user2.rolled}`}</p>
+          <p>{`You ranked the task a ${user2.ranked}`}</p>
         </div>
       </div>
-    ) : (
-      <p>Loading...</p>
-    )
-  }
+    </div>
+  ) : (
+    <p>Loading...</p>
+  )
 }
-
 const mapStateToProps = state => ({
   account: state.account,
   tasks: state.tasks,
@@ -126,14 +148,14 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  fetchTasks: (accountId, week) => {
-    dispatch(fetchTasks(accountId, week))
+  fetchTasks: async (accountId, week) => {
+    await dispatch(fetchTasks(accountId, week))
   },
-  fetchLatestWeek: accountId => {
-    dispatch(fetchLatestWeek(accountId))
+  fetchLatestWeek: async accountId => {
+    await dispatch(fetchLatestWeek(accountId))
   },
-  fetchRanks: (accountId, week) => {
-    dispatch(fetchRanks(accountId, week))
+  fetchRanks: async (accountId, week) => {
+    await dispatch(fetchRanks(accountId, week))
   }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(ChoreDistribution)
