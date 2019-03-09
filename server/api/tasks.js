@@ -55,6 +55,41 @@ router.get('/rank/:accountId/:week', async (req, res, next) => {
   }
 })
 
+router.get('/responsibilities/:accountId/:week', async (req, res, next) => {
+  try {
+    const allResponsibilities = await Responsibilities.findAll({
+      where: {
+        accountId: req.params.accountId,
+        week: req.params.week
+      }
+    })
+
+    let jsonResult = {}
+
+    const getTaskByDetails = async userNum => {
+      let userResponsibilities = allResponsibilities.filter(
+        obj => obj.won === userNum
+      )
+
+      let result = []
+
+      for (let i = 0; i < userResponsibilities.length; i++) {
+        let currTaskId = userResponsibilities[i].taskId
+        let taskDetails = await Task.findById(currTaskId)
+        result.push(taskDetails)
+      }
+      return result
+    }
+
+    jsonResult['UserNum: 1'] = await getTaskByDetails(1)
+    jsonResult['UserNum: 2'] = await getTaskByDetails(2)
+
+    res.json(jsonResult)
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.get('/:accountId/:week', async (req, res, next) => {
   try {
     const allTasks = await Task.findAll({
@@ -119,6 +154,21 @@ router.post('/rank/:userNum', async (req, res, next) => {
     })
 
     res.json(ranking)
+  } catch (err) {
+    next(err)
+  }
+})
+router.put('/rank/:taskId/:winnerUserNum', async (req, res, next) => {
+  try {
+    const {taskId, winnerUserNum} = req.params
+    const currTask = await Responsibilities.findOne({
+      where: {
+        taskId: taskId,
+        userNum: winnerUserNum
+      }
+    })
+    currTask.update({won: winnerUserNum})
+    res.json(200)
   } catch (err) {
     next(err)
   }

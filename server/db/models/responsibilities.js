@@ -6,7 +6,8 @@ const Responsibilities = db.define('responsibilities', {
   taskName: Sequelize.STRING,
   week: Sequelize.INTEGER,
   userNum: Sequelize.INTEGER,
-  accountId: Sequelize.INTEGER
+  accountId: Sequelize.INTEGER,
+  won: Sequelize.INTEGER
 })
 
 module.exports = Responsibilities

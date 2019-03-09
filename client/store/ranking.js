@@ -2,10 +2,12 @@ import axios from 'axios'
 
 //initial state
 const userRanking = {}
+const defaultassignments = {}
 
 //action type
 const ADDED_RANK = 'ADDED_RANK'
 const FETCHED_RANKS = 'FETCH_RANKS'
+const GOT_ASSIGNMENTS = 'GOT_ASSIGNMENTS'
 //action creator
 
 const addedRank = (rankedTaskArr, userNum) => ({
@@ -19,6 +21,10 @@ const fetchedRanks = rankedTaskArrs => ({
   rankedTaskArrs
 })
 
+const gotAssignments = assignments => ({
+  type: GOT_ASSIGNMENTS,
+  assignments
+})
 export const rankTasks = (rankedTaskArr, userNum) => {
   return async dispatch => {
     try {
@@ -41,6 +47,29 @@ export const fetchRanks = (accountId, week) => {
   }
 }
 
+export const saveAssignment = (taskId, winnerUserNum) => {
+  return async () => {
+    try {
+      await axios.put(`/api/tasks/rank/${taskId}/${winnerUserNum}`)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+}
+
+export const fetchAssignments = (accountId, week) => {
+  return async dispatch => {
+    try {
+      const {data} = await axios.get(
+        `/api/tasks/responsibilities/${accountId}/${week}`
+      )
+      dispatch(gotAssignments(data))
+    } catch (err) {
+      console.error(err)
+    }
+  }
+}
+
 export default function(state = userRanking, action) {
   switch (action.type) {
     case ADDED_RANK: {
@@ -51,6 +80,16 @@ export default function(state = userRanking, action) {
     case FETCHED_RANKS: {
       return action.rankedTaskArrs
     }
+    default:
+      return state
+  }
+}
+
+export const assignments = (state = defaultassignments, action) => {
+  switch (action.type) {
+    case GOT_ASSIGNMENTS:
+      console.log('assignments reducer', action.assignments)
+      return action.assignments
     default:
       return state
   }

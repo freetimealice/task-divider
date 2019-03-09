@@ -23,5 +23,13 @@ form div {
 .users-container {
   display: flex;
   justify-content: space-around;
-  align-items: flex-end;
+  align-items: flex-start;
+}
+
+.assignment {
+  padding: 10px;
+}
+
+.users-container {
+  vertical-align: top;
 }

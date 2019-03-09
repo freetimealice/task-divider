@@ -4,9 +4,9 @@ import thunkMiddleware from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
 import account from './account'
 import tasks, {week} from './task'
-import ranking from './ranking'
+import ranking, {assignments} from './ranking'
 
-const reducer = combineReducers({account, tasks, ranking, week})
+const reducer = combineReducers({account, tasks, ranking, week, assignments})
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )
