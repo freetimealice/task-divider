@@ -25,11 +25,14 @@ const gotAssignments = assignments => ({
   type: GOT_ASSIGNMENTS,
   assignments
 })
-export const rankTasks = (rankedTaskArr, userNum) => {
+export const rankTasks = (rankedTaskArr, userNum, accountId, history) => {
   return async dispatch => {
     try {
       await axios.post(`/api/tasks/rank/${userNum}/`, {rankedTaskArr})
       dispatch(addedRank(rankedTaskArr, userNum))
+      userNum === '1'
+        ? history.push(`/ranking/2`)
+        : history.push(`/chore-distribution`)
     } catch (err) {
       console.error(err)
     }
@@ -88,7 +91,6 @@ export default function(state = userRanking, action) {
 export const assignments = (state = defaultassignments, action) => {
   switch (action.type) {
     case GOT_ASSIGNMENTS:
-      console.log('assignments reducer', action.assignments)
       return action.assignments
     default:
       return state

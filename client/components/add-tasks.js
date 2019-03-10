@@ -42,6 +42,11 @@ class AddTasks extends React.Component {
     this.props.addTask(task)
   }
 
+  nextPageHandler = event => {
+    event.preventDefault()
+    this.props.history.push(`/ranking/1`)
+  }
+
   render() {
     const {tasks} = this.props
     return (
@@ -74,6 +79,10 @@ class AddTasks extends React.Component {
           </div>
           <button type="submit">ADD TASK</button>
         </form>
+        <button type="submit" onClick={this.nextPageHandler}>
+          Ready to Rank!
+        </button>
+
         <div className="allTasks">
           {tasks.map(task => {
             const {name, frequency, notes, duration, totalTime} = task

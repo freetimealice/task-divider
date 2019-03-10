@@ -9,7 +9,8 @@ import {
   AddTasks,
   Ranking,
   ChoreDistribution,
-  GoogleTask
+  GoogleTask,
+  UserStats
 } from './components'
 import {me} from './store'
 
@@ -28,8 +29,9 @@ class Routes extends Component {
       <Switch>
         {/* Routes placed here are available to all visitors */}
         <Route path="/login" component={Login} />
-        <Route path="/signup" component={Signup} />
-        <Route path="/googletask" component={GoogleTask} />
+        <Route exact path="/signup" component={Signup} />
+        <Route exact path="/googletask" component={GoogleTask} />
+        <Route exact path="/user/:userNum" component={UserStats} />
         {isLoggedIn && (
           <Switch>
             {/* Routes placed here are only available after logging in */}

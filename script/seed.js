@@ -1,7 +1,7 @@
 'use strict'
 
 const db = require('../server/db')
-const {Account, User, Task} = require('../server/db/models')
+const {Account, User, Task, Responsibilities} = require('../server/db/models')
 
 async function seed() {
   await db.sync({force: true})
@@ -19,47 +19,124 @@ async function seed() {
 
   const tasks = await Promise.all([
     Task.create({
-      name: 'Toilet',
-      week: 1,
-      complete: false,
-      notes: 'clean the rim!',
-      frequency: 3,
-      duration: 30,
-      totalTime: 90,
-      accountId: 1
+      name: 'Vacuum',
+      week: '1',
+      complete: 'false',
+      notes: 'Bedroom twice',
+      frequency: '1',
+      duration: '60',
+      totalTime: '60',
+      accountId: '1'
     }),
     Task.create({
-      name: 'Dishes',
-      week: 1,
-      complete: false,
-      notes: 'use organic soap',
-      frequency: 1,
-      duration: 20,
-      totalTime: 20,
-      accountId: 1
+      name: 'Wash dishes',
+      week: '1',
+      complete: 'false',
+      frequency: '7',
+      duration: '15',
+      totalTime: '105',
+      accountId: '1'
     }),
     Task.create({
-      name: 'Garbage',
-      week: 1,
-      complete: false,
-      notes: 'remember to wash hands',
-      frequency: 1,
-      duration: 20,
-      totalTime: 20,
-      accountId: 1
+      name: 'Dry and put away dishes',
+      week: '1',
+      complete: 'false',
+      notes: "Don't break ceramics",
+      frequency: '7',
+      duration: '15',
+      totalTime: '105',
+      accountId: '1'
     }),
     Task.create({
-      name: 'Pickup kids',
-      week: 1,
-      complete: false,
-      notes: 'Little Jimmy from Kindergarten at 3pm',
-      frequency: 1,
-      duration: 20,
-      totalTime: 20,
-      accountId: 1
+      name: 'Feed Bobo',
+      week: '1',
+      complete: 'false',
+      notes: 'Organic food only',
+      frequency: '7',
+      duration: '5',
+      totalTime: '35',
+      accountId: '1'
+    }),
+    Task.create({
+      name: 'Pickup Jimmy',
+      week: '1',
+      complete: 'false',
+      notes: 'from Kindergarten',
+      frequency: '5',
+      duration: '40',
+      totalTime: '200',
+      accountId: '1'
+    }),
+    Task.create({
+      name: 'Drive mom to doctor',
+      week: '1',
+      complete: 'false',
+      notes: 'at 101 Nowhereville',
+      frequency: '1',
+      duration: '60',
+      totalTime: '60',
+      accountId: '1'
+    }),
+    Task.create({
+      name: 'Wash bedding',
+      week: '1',
+      complete: 'false',
+      frequency: '1',
+      duration: '5',
+      totalTime: '5',
+      accountId: '1'
+    }),
+    Task.create({
+      name: 'Water plants',
+      week: '1',
+      complete: 'false',
+      notes: 'Needs more sun!!',
+      frequency: '3',
+      duration: '5',
+      totalTime: '15',
+      accountId: '1'
+    }),
+    Task.create({
+      name: 'Take out the trash',
+      week: '1',
+      complete: 'false',
+      frequency: '2',
+      duration: '5',
+      totalTime: '10',
+      accountId: '1'
+    }),
+    Task.create({
+      name: 'Wash toilet',
+      week: '1',
+      complete: 'false',
+      frequency: '1',
+      duration: '20',
+      totalTime: '20',
+      accountId: '1'
     })
   ])
-
+  // const responsibilities = await Promise.all([
+  //   Responsibilities.create({ranking: '7', taskName: 'Vacuum', week: '1', userNum: '1', accountId: '1', won: '1', userId: '1', taskId: '11'}),
+  //   Responsibilities.create({ranking: '10', taskName: 'Wash dishes', week: '1', userNum: '1', accountId: '1', won: '', userId: '1', taskId: '12'}),
+  //   Responsibilities.create({ranking: '9', taskName: 'Dry and put away dishes', week: '1', userNum: '1', accountId: '1', won: '1', userId: '1', taskId: '13'}),
+  //   Responsibilities.create({ranking: '5', taskName: 'Feed Bobo', week: '1', userNum: '1', accountId: '1', won: '', userId: '1', taskId: '14'}),
+  //   Responsibilities.create({ranking: '6', taskName: 'Pickup Jimmy', week: '1', userNum: '1', accountId: '1', won: '1', userId: '1', taskId: '15'}),
+  //   Responsibilities.create({ranking: '8', taskName: 'Drive mom to doctor', week: '1', userNum: '1', accountId: '1', won: '', userId: '1', taskId: '16'}),
+  //   Responsibilities.create({ranking: '1', taskName: 'Wash bedding', week: '1', userNum: '1', accountId: '1', won: '1', userId: '1', taskId: '17'}),
+  //   Responsibilities.create({ranking: '3', taskName: 'Water plants', week: '1', userNum: '1', accountId: '1', won: '', userId: '1', taskId: '18'}),
+  //   Responsibilities.create({ranking: '2', taskName: 'Take out the trash', week: '1', userNum: '1', accountId: '1', won: '', userId: '1', taskId: '19'}),
+  //   Responsibilities.create({ranking: '4', taskName: 'Wash toilet', week: '1', userNum: '1', accountId: '1', won: '', userId: '1', taskId: '20'}),
+  //   Responsibilities.create({ranking: '7', taskName: 'Vacuum', week: '1', userNum: '2', accountId: '1', won: '', userId: '2', taskId: '11'}),
+  //   Responsibilities.create({ranking: '10', taskName: 'Wash dishes', week: '1', userNum: '2', accountId: '1', won: '2', userId: '2', taskId: '12'}),
+  //   Responsibilities.create({ranking: '9', taskName: 'Dry and put away dishes', week: '1', userNum: '2', accountId: '1', won: '', userId: '2', taskId: '13'}),
+  //   Responsibilities.create({ranking: '6', taskName: 'Feed Bobo', week: '1', userNum: '2', accountId: '1', won: '2', userId: '2', taskId: '14'}),
+  //   Responsibilities.create({ranking: '2', taskName: 'Pickup Jimmy', week: '1', userNum: '2', accountId: '1', won: '', userId: '2', taskId: '15'}),
+  //   Responsibilities.create({ranking: '8', taskName: 'Drive mom to doctor', week: '1', userNum: '2', accountId: '1', won: '2', userId: '2', taskId: '16'}),
+  //   Responsibilities.create({ranking: '1', taskName: 'Wash bedding', week: '1', userNum: '2', accountId: '1', won: '', userId: '2', taskId: '17'}),
+  //   Responsibilities.create({ranking: '4', taskName: 'Water plants', week: '1', userNum: '2', accountId: '1', won: '2', userId: '2', taskId: '18'}),
+  //   Responsibilities.create({ranking: '3', taskName: 'Take out the trash', week: '1', userNum: '2', accountId: '1', won: '2', userId: '2', taskId: '19'}),
+  //   Responsibilities.create({ranking: '5', taskName: 'Wash toilet', week: '1', userNum: '2', accountId: '1', won: '2', userId: '2', taskId: '20'}),
+  // ])
   console.log(`seeded ${accounts.length} accounts`)
   console.log(`seeded successfully`)
 }

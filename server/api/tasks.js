@@ -57,12 +57,21 @@ router.get('/rank/:accountId/:week', async (req, res, next) => {
 
 router.get('/responsibilities/:accountId/:week', async (req, res, next) => {
   try {
-    const allResponsibilities = await Responsibilities.findAll({
-      where: {
-        accountId: req.params.accountId,
-        week: req.params.week
-      }
-    })
+    let allResponsibilities = ''
+    if (req.params.week !== '0') {
+      allResponsibilities = await Responsibilities.findAll({
+        where: {
+          accountId: req.params.accountId,
+          week: req.params.week
+        }
+      })
+    } else {
+      allResponsibilities = await Responsibilities.findAll({
+        where: {
+          accountId: req.params.accountId
+        }
+      })
+    }
 
     let jsonResult = {}
 

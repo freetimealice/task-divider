@@ -10,7 +10,7 @@ class Upload extends React.Component {
       DISCOVERY_DOCS: [
         'https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest'
       ],
-      SCOPES: 'https://www.googleapis.com/auth/tasks.readonly',
+      SCOPES: 'https://www.googleapis.com/auth/tasks',
       loaded: false
     }
   }
@@ -25,21 +25,11 @@ class Upload extends React.Component {
     document.body.appendChild(script)
   }
 
-  /**
-   *  On load, called to load the auth2 library and API client library.
-   */
   handleClientLoad = () => {
-    console.log('hi')
     gapi.load('client:auth2', this.initClient)
   }
 
-  /**
-   *  Initializes the API client library and sets up sign-in state
-   *  listeners.
-   */
-
   initClient = async () => {
-    console.log('in initClient')
     const {CLIENT_ID, API_KEY, DISCOVERY_DOCS, SCOPES} = this.state
     await gapi.client.init({
       apiKey: API_KEY,
@@ -48,10 +38,12 @@ class Upload extends React.Component {
       scope: SCOPES
     })
 
-    console.log('i am here')
-
-    var authorizeButton = document.getElementById('authorize_button')
-    var signoutButton = document.getElementById('signout_button')
+    var authorizeButton = document.getElementById(
+      `authorize_button${this.props.userNum}`
+    )
+    var signoutButton = document.getElementById(
+      `signout_button${this.props.userNum}`
+    )
 
     gapi.auth2.getAuthInstance().isSignedIn.listen(this.updateSigninStatus)
     this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get())
@@ -60,92 +52,95 @@ class Upload extends React.Component {
   }
 
   updateSigninStatus = isSignedIn => {
-    console.log('updateSigninStatus')
-    var authorizeButton = document.getElementById('authorize_button')
-    var signoutButton = document.getElementById('signout_button')
+    var authorizeButton = document.getElementById(
+      `authorize_button${this.props.userNum}`
+    )
+    var signoutButton = document.getElementById(
+      `signout_button${this.props.userNum}`
+    )
     if (isSignedIn) {
       authorizeButton.style.display = 'none'
       signoutButton.style.display = 'block'
-      this.listTaskLists()
     } else {
       authorizeButton.style.display = 'block'
       signoutButton.style.display = 'none'
     }
   }
 
-  /**
-   *  Called when the signed in status changes, to update the UI
-   *  appropriately. After a sign-in, the API is called.
-   */
-
-  /**
-   *  Sign in the user upon button click.
-   */
   handleAuthClick = event => {
-    console.log('in handleAuthClick')
     gapi.auth2.getAuthInstance().signIn()
   }
 
-  /**
-   *  Sign out the user upon button click.
-   */
   handleSignoutClick = event => {
     gapi.auth2.getAuthInstance().signOut()
   }
 
-  /**
-   * Append a pre element to the body containing the given message
-   * as its text node. Used to display the results of the API call.
-   *
-   * @param {string} message Text to be placed in pre element.
-   */
-  appendPre = message => {
-    console.log('in append')
-    var pre = document.getElementById('content')
-    var textContent = document.createTextNode(message + '\n')
-    pre.appendChild(textContent)
+  addTasks = async (userNum, tasks) => {
+    let week = tasks[`UserNum: ${userNum}`][0].week
+
+    tasks = tasks[`UserNum: ${userNum}`].map(task => ({
+      title: task.name,
+      notes: `Complete ${task.frequency} ${
+        task.frequency > 1 ? 'times ' : 'time '
+      }per week. Expected to take ${task.duration} minutes per time. ${
+        task.notes
+      }`,
+      status: 'needsAction'
+    }))
+    let choresFolderId = await this.seekFolderId(`Chores - week ${week}`)
+
+    tasks.forEach(async currTask => {
+      let addedTasks = await gapi.client.tasks.tasks.insert({
+        tasklist: choresFolderId,
+        resource: currTask
+      })
+    })
+    alert('Your tasks have been added!')
   }
 
-  /**
-   * Print task lists.
-   */
-  listTaskLists = async () => {
-    console.log('hi')
-    let response = await gapi.client.tasks.tasklists.list({
+  seekFolderId = async folderName => {
+    let findFolder = await gapi.client.tasks.tasklists.list({
       maxResults: 10
     })
-
-    this.appendPre('Task Lists:')
-    var taskLists = response.result.items
-    if (taskLists && taskLists.length > 0) {
-      for (var i = 0; i < taskLists.length; i++) {
-        var taskList = taskLists[i]
-        this.appendPre(taskList.title + ' (' + taskList.id + ')')
-      }
-      console.log('taskList', response.result)
-    } else {
-      this.appendPre('No task lists found.')
+    let taskLists = findFolder.result.items
+    let found = taskLists.filter(tasklist => tasklist.title === folderName)
+    if (found.length) alert('Your tasks have already been added!')
+    else {
+      let create = await gapi.client.tasks.tasklists.insert({
+        resource: {
+          title: folderName
+        }
+      })
+      return create.result.id
     }
   }
 
   componentDidMount() {
     if (!this.state.loaded) {
       this.loadGapi()
-    } else {
-      console.log('loaded')
     }
   }
 
   render() {
     return (
       <div>
-        <button type="submit" id="authorize_button">
-          Authorize!
+        <button type="submit" id={`authorize_button${this.props.userNum}`}>
+          Authorize & add chores!
         </button>
-        <button type="submit" id="signout_button">
-          Signout!
+
+        <div>
+          <button
+            type="submit"
+            onClick={() => {
+              this.addTasks(this.props.userNum, this.props.assignments)
+            }}
+          >
+            Add Tasks
+          </button>
+        </div>
+        <button type="submit" id={`signout_button${this.props.userNum}`}>
+          Signout
         </button>
-        <div id="content" />
         <div id="result" />
       </div>
     )

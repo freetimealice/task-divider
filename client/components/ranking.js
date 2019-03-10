@@ -32,16 +32,17 @@ class SortableComponent extends React.Component {
     this.setState({tempOrder: taskArr})
   }
 
-  submitHandler = event => {
+  submitHandler = async event => {
+    let userNum = this.props.match.params.userNum
     event.preventDefault()
     let taskArr = this.state.tempOrder.length
       ? this.state.tempOrder
       : this.props.tasks
-    this.props.rankTasks(
-      taskArr,
-      this.props.match.params.userNum,
-      this.props.accountId
-    )
+
+    await this.props.rankTasks(taskArr, userNum, this.props.accountId)
+    userNum < 1
+      ? this.props.history.push(`/ranking/2`)
+      : this.props.history.push(`/ranking/`)
   }
 
   render() {
@@ -92,7 +93,7 @@ const mapStateToProps = state => ({
   week: state.week
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   addTask: task => {
     dispatch(addTask(task))
   },
@@ -100,7 +101,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchTasks(accountId, week))
   },
   rankTasks: (taskArr, userNum, accountId) => {
-    dispatch(rankTasks(taskArr, userNum, accountId))
+    dispatch(rankTasks(taskArr, userNum, accountId, ownProps.history))
   },
   fetchLatestWeek: accountId => {
     dispatch(fetchLatestWeek(accountId))

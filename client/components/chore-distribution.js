@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
 import {fetchTasks, fetchLatestWeek} from '../store/task'
 import {fetchRanks, saveAssignment, fetchAssignments} from '../store/ranking'
+import GoogleTask from './googletask'
 
 const ChoreDistribution = props => {
   const [user1, setUser1] = useState({
@@ -41,13 +42,6 @@ const ChoreDistribution = props => {
     [props.week, props.tasks, props.assignments]
   )
 
-  useEffect(
-    () => {
-      console.log('hi')
-    },
-    [props]
-  )
-
   const assignChores = (task, user1TotalTime, user2TotalTime) => {
     const numOfTasks = props.tasks.length
     let updatedUsers = {
@@ -76,11 +70,15 @@ const ChoreDistribution = props => {
         time: timeModifier,
         totalPoints: randNum + taskRank + timeModifier
       }
-      // console.log('task', task)
-      // console.log(`user${userNum} randNum`, randNum)
-      // console.log(`user${userNum} taskRank`, taskRank)
-      // console.log(`user${userNum} time`, timeModifier)
-      // console.log(`user${userNum} total`, randNum + taskRank + timeModifier)
+      console.log('task', task)
+      console.log(`user${userNum} randNum`, randNum)
+      console.log(`user${userNum} taskRank`, taskRank)
+      console.log(`user${userNum} user1TotalTime, user2 TotalTime, `, taskRank)
+      console.log(`user${userNum} time modifier`, timeModifier)
+      console.log(
+        `user${userNum} total points`,
+        randNum + taskRank + timeModifier
+      )
     }
     return updatedUsers
   }
@@ -88,7 +86,6 @@ const ChoreDistribution = props => {
   const submitHandler = event => {
     event.preventDefault()
     setSteps(steps => steps + 1)
-    console.log('steps', steps)
     if (steps > 0) {
       alert('All tasks have been asigned')
       return false
@@ -117,7 +114,7 @@ const ChoreDistribution = props => {
       }
 
       if (winner === 1) {
-        user1TotalTime = +currTask.totalTime
+        user1TotalTime += currTask.totalTime
         setUser1({
           ...updatedUsers.user1,
           totalTime: user1.totalTime + currTask.totalTime,
@@ -129,7 +126,7 @@ const ChoreDistribution = props => {
           tasks: user2.tasks
         }))
       } else {
-        user2TotalTime = +currTask.totalTime
+        user2TotalTime += currTask.totalTime
         setUser1({
           ...updatedUsers.user1,
           totalTime: user1.totalTime,
@@ -142,11 +139,10 @@ const ChoreDistribution = props => {
         }))
       }
 
-      console.log('winner', winner)
       props.saveAssignment(currTask.id, winner)
+      console.log('winner is', winner)
     }
   }
-  console.log('props.assignments1', props.assignments[`UserNum: 1`])
   return props.week ? (
     <div className="container">
       <h1 className="center-align"> Which chores will you win?</h1>
@@ -175,6 +171,11 @@ const ChoreDistribution = props => {
         {props.assignments[`UserNum: 1`] ? (
           <div className="user1">
             <h3>User 1</h3>
+            Total Time:{' '}
+            {props.assignments[`UserNum: 1`].reduce((total, task) => {
+              total = total + task.totalTime
+              return total
+            }, 0)}
             {props.assignments[`UserNum: 1`].map(assignment => {
               return (
                 <div key={assignment.name} className="assignment">
@@ -184,6 +185,7 @@ const ChoreDistribution = props => {
                 </div>
               )
             })}
+            <GoogleTask assignments={props.assignments} userNum={1} />
           </div>
         ) : (
           <p />
@@ -192,6 +194,11 @@ const ChoreDistribution = props => {
         {props.assignments[`UserNum: 2`] ? (
           <div className="user2">
             <h3>User 2</h3>
+            Total Time:{' '}
+            {props.assignments[`UserNum: 2`].reduce((total, task) => {
+              total = total + task.totalTime
+              return total
+            }, 0)}
             {props.assignments[`UserNum: 2`].map(assignment => {
               return (
                 <div key={assignment.name} className="assignment">
@@ -201,6 +208,7 @@ const ChoreDistribution = props => {
                 </div>
               )
             })}
+            <GoogleTask assignments={props.assignments} userNum={2} />
           </div>
         ) : (
           <p />
@@ -233,7 +241,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(saveAssignment(taskId, winnerUserNum))
   },
   fetchAssignments: (accountId, week) => {
-    console.log('fetchassignments dispatch', accountId, week)
     dispatch(fetchAssignments(accountId, week))
   }
 })
