@@ -64,7 +64,7 @@ const SortableList = SortableContainer(({items, submitHandler, userNum}) => {
   return (
     <div className="container">
       <p>
-        User {userNum}, Rank your preference of tasks, with most desired on top,
+        User {userNum}, rank your preference of tasks, with most desired on top,
         and least desired at the bottom.
       </p>
       {Array.isArray(items) ? (

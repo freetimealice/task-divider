@@ -33,3 +33,9 @@ form div {
 .users-container {
   vertical-align: top;
 }
+
+.userDetails {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+}

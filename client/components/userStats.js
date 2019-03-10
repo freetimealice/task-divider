@@ -33,22 +33,31 @@ const UserStats = props => {
           })
         }
       })
-      return res
+      return res.sort((a, b) => b.totalTime - a.totalTime)
     }
   }
   let data = calcValue()
-  console.log('data', data)
   const userNum = props.match.params.userNum
   return props.account && !(data === undefined) ? (
     <div className="container">
       <h1 className="center-align"> User {userNum} Details</h1>
-      <PieChart
-        data={data}
-        width={200}
-        height={200}
-        innerRadius={60}
-        outerRadius={100}
-      />
+      <div className="userDetails">
+        <PieChart
+          data={data}
+          width={500}
+          height={500}
+          innerRadius={150}
+          outerRadius={250}
+        />
+        <div className="assignments">
+          {data.map(currData => (
+            <div key={currData.name}>
+              Chore Name: {currData.name} minutes<br />
+              Total Time Spent: {currData.totalTime}minutes<br />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   ) : (
     <p>Loading...!</p>
