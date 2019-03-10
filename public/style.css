@@ -1,5 +1,7 @@
 body {
   font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -10,9 +12,50 @@ label {
   display: block;
 }
 
-nav a {
+nav.nav-center {
+  background-color: #80cbc4;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.logo img {
+  width: 100px;
+  height: 100px;
+  padding-right: 10px;
+  padding-top: 10px;
+}
+
+.login-container img {
+  width: 100px;
+  height: 100px;
+  padding-right: 10px;
+  padding-top: 10px;
+}
+
+.logo h1 {
+  padding: 0px 0;
+  margin-bottom: 0px;
+}
+
+nav.nav-center ul {
+  text-align: center;
+}
+
+.login-container {
+  display: flex;
+  flex: column;
+}
+
+nav.nav-center ul li {
+  display: inline;
+  float: none;
+}
+nav.nav-center ul li a {
   display: inline-block;
-  margin: 1em;
 }
 
 form div {

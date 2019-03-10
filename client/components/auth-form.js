@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {auth} from '../store'
-
+import {Link} from 'react-router-dom'
 /**
  * COMPONENT
  */
@@ -10,43 +10,75 @@ const AuthForm = props => {
   const {name, displayName, handleSubmit, error} = props
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} name={name}>
-        <div>
-          <label htmlFor="accountName">
-            <small>Account Name</small>
-          </label>
-          <input name="accountName" type="text" />
-        </div>
-        <div>
-          <label htmlFor="password">
-            <small>Password</small>
-          </label>
-          <input name="password" type="password" />
-        </div>
-        {name === 'signup' ? (
-          <div>
-            <div>
-              <label htmlFor="user1">
-                <small>User 1</small>
-              </label>
-              <input name="user1" type="text" />
+    <div className="valign-wrapper row login-box">
+      <div className="col card hoverable s10 pull-s1 m6 pull-m3 l4 pull-l4">
+        <form onSubmit={handleSubmit} name={name}>
+          <div className="card-content">
+            <div className="login-container">
+              <img src="/people.png" />
+              <div className="login-title">
+                <span className="card-title">Chore Counselor</span>
+                Please log in or sign up
+              </div>
             </div>
-            <div>
-              <label htmlFor="user2">
-                <small>User 2</small>
-              </label>
-              <input name="user2" type="text" />
-            </div>{' '}
+            <div className="row">
+              <div className="input-field col s12">
+                <label htmlFor="accountName">
+                  <small>Account Name</small>
+                </label>
+                <input name="accountName" type="text" required />
+              </div>
+              <div className="input-field col s12">
+                <label htmlFor="password">
+                  <small>Password</small>
+                </label>
+                <input name="password" type="password" required />
+              </div>
+              {name === 'signup' ? (
+                <React.Fragment>
+                  <div className="input-field col s8">
+                    <label htmlFor="user1">
+                      <small>User 1</small>
+                    </label>
+                    <input name="user1" type="text" required />
+                  </div>
+                  <div className="input-field col s8">
+                    <label htmlFor="user2">
+                      <small>User 2</small>
+                    </label>
+                    <input name="user2" type="text" required />
+                  </div>{' '}
+                </React.Fragment>
+              ) : (
+                <div />
+              )}
+
+              <div className="col s12">
+                <button
+                  className="btn waves-effect waves-light right-align"
+                  type="submit"
+                  name="action"
+                >
+                  {displayName}
+                </button>
+              </div>
+              {name === 'login' ? (
+                <div className="col s12">
+                  <Link to="/signup">Sign Up</Link>
+                </div>
+              ) : (
+                <div className="col s12">
+                  <Link to="/login">Already have an account?</Link>
+                </div>
+              )}
+              {error &&
+                error.response && (
+                  <div className="col s12"> {error.response.data} </div>
+                )}
+            </div>
           </div>
-        ) : (
-          <div />
-        )}
-        <div>
-          <button type="submit">{displayName}</button>
-        </div>
-        {error && error.response && <div> {error.response.data} </div>}
-      </form>
+        </form>
+      </div>
     </div>
   )
 }

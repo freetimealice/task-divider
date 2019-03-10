@@ -10,9 +10,10 @@ router.get('/latestweek/:accountId', async (req, res, next) => {
       }
     })
 
-    const lastestWeek = allTasks.reduce((latestWeek, currTask) => {
+    let lastestWeek = allTasks.reduce((latestWeek, currTask) => {
       return currTask.week > latestWeek ? currTask.week : latestWeek
     }, 0)
+    if (lastestWeek === 0) lastestWeek = 'N/A'
     res.json(lastestWeek)
   } catch (err) {
     next(err)

@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {addTask, fetchTasks, deleteTask} from '../store/task'
+import {addTask, fetchTasks, deleteTask, fetchLatestWeek} from '../store/task'
 
 class AddTasks extends React.Component {
   constructor() {
@@ -12,10 +12,19 @@ class AddTasks extends React.Component {
     }
   }
 
+  componentDidMount() {
+    if (this.props.account.id) {
+      this.props.fetchLatestWeek(this.props.account.id)
+    }
+  }
+
   componentDidUpdate() {
     if (this.state.renderAgain) {
       this.props.fetchTasks(this.props.account.id, this.state.value)
       this.setState({renderAgain: false})
+    }
+    if (this.props.account.id && !this.props.week) {
+      this.props.fetchLatestWeek(this.props.account.id)
     }
   }
 
@@ -52,12 +61,13 @@ class AddTasks extends React.Component {
     return (
       <div className="container">
         <form onSubmit={this.submitHandler}>
+          {this.props.week ? <div>Last Week: {this.props.week} </div> : <div />}
           <div>
             <label htmlFor="week">Week: </label>
             <input
               type="text"
               name="week"
-              value={this.state.value}
+              defaultValue={this.state.value}
               onChange={this.handleChange}
             />
           </div>
@@ -79,7 +89,12 @@ class AddTasks extends React.Component {
           </div>
           <button type="submit">ADD TASK</button>
         </form>
-        <button type="submit" onClick={this.nextPageHandler}>
+        <button
+          className="btn waves-effect waves-light right-align"
+          type="submit"
+          onClick={this.nextPageHandler}
+          name="action"
+        >
           Ready to Rank!
         </button>
 
@@ -114,12 +129,16 @@ class AddTasks extends React.Component {
 
 const mapStateToProps = state => ({
   account: state.account,
-  tasks: state.tasks
+  tasks: state.tasks,
+  week: state.week
 })
 
 const mapDispatchToProps = dispatch => ({
   addTask: task => {
     dispatch(addTask(task))
+  },
+  fetchLatestWeek: accountId => {
+    dispatch(fetchLatestWeek(accountId))
   },
   fetchTasks: (accountId, week) => {
     dispatch(fetchTasks(accountId, week))

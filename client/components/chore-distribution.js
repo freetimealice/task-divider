@@ -149,9 +149,17 @@ const ChoreDistribution = props => {
       <div className="center-align">
         {props.tasks.map(task => {
           return (
-            <div className="center-align" key={task.name}>
-              Task Name: {task.name} <br />
-              Total Time: {task.totalTime}
+            <div className="row" key={task.name}>
+              <div className="col s4" />
+              <div className="col s4">
+                <div className="card amber">
+                  <div className="card-content white-text">
+                    <span className="card-title">{task.name}</span>
+                    Total Time!: {task.totalTime}
+                  </div>
+                </div>
+              </div>
+              <div className="col s4" />
             </div>
           )
         })}
