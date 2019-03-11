@@ -70,10 +70,10 @@ const ChoreDistribution = props => {
         time: timeModifier,
         totalPoints: randNum + taskRank + timeModifier
       }
+      console.log('-----------------------')
       console.log('task', task)
       console.log(`user${userNum} randNum`, randNum)
       console.log(`user${userNum} taskRank`, taskRank)
-      console.log(`user${userNum} user1TotalTime, user2 TotalTime, `, taskRank)
       console.log(`user${userNum} time modifier`, timeModifier)
       console.log(
         `user${userNum} total points`,
@@ -150,7 +150,6 @@ const ChoreDistribution = props => {
     })
     return tasks.length > 0 ? 'move-left' : 'move-right'
   }
-  console.log('rendering', props.assignments)
   return props.week ? (
     <div className="container">
       <h1 className="center-align"> Which chores will you win?</h1>
@@ -237,7 +236,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(saveAssignment(taskId, winnerUserNum))
   },
   fetchAssignments: (accountId, week) => {
-    console.log('fetching assignment!!!')
     dispatch(fetchAssignments(accountId, week))
   }
 })

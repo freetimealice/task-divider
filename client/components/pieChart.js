@@ -2,7 +2,6 @@ import React from 'react'
 import * as d3 from 'd3'
 
 const Arc = ({data, index, createArc, colors}) => {
-  console.log(colors(index))
   return (
     <g key={data.data.name} className="arc">
       <path className="arc" d={createArc(data)} fill={colors(index)} />
