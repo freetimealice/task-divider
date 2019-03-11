@@ -23,7 +23,7 @@ const pieChart = props => {
   const legendItemSize = 18
   const legendSpacing = 4
   return (
-    <div>
+    <div className="pieChart">
       <svg width={props.width} height={props.height}>
         <g transform={`translate(${props.outerRadius} ${props.outerRadius})`}>
           {data.map((d, i) => {

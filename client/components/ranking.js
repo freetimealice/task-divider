@@ -67,6 +67,14 @@ const SortableList = SortableContainer(({items, submitHandler, userNum}) => {
         User {userNum}, rank your preference of tasks, with most desired on top,
         and least desired at the bottom.
       </p>
+      <button
+        className="btn waves-effect waves-light right-align"
+        type="submit"
+        onClick={submitHandler}
+      >
+        Ranked!
+      </button>
+      <div />
       {Array.isArray(items) ? (
         items.map((task, index) => {
           return (
@@ -76,9 +84,6 @@ const SortableList = SortableContainer(({items, submitHandler, userNum}) => {
       ) : (
         <p>Loading...</p>
       )}
-      <button type="submit" onClick={submitHandler}>
-        Ranked!
-      </button>
     </div>
   )
 })

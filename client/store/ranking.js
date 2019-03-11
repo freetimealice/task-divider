@@ -8,6 +8,7 @@ const defaultassignments = {}
 const ADDED_RANK = 'ADDED_RANK'
 const FETCHED_RANKS = 'FETCH_RANKS'
 const GOT_ASSIGNMENTS = 'GOT_ASSIGNMENTS'
+const CLEAR_ASSIGNMENTS = 'CLEAR_ASSIGNMENTS'
 //action creator
 
 const addedRank = (rankedTaskArr, userNum) => ({
@@ -19,6 +20,10 @@ const addedRank = (rankedTaskArr, userNum) => ({
 const fetchedRanks = rankedTaskArrs => ({
   type: FETCHED_RANKS,
   rankedTaskArrs
+})
+
+export const clearAssignments = () => ({
+  type: CLEAR_ASSIGNMENTS
 })
 
 const gotAssignments = assignments => ({
@@ -92,6 +97,8 @@ export const assignments = (state = defaultassignments, action) => {
   switch (action.type) {
     case GOT_ASSIGNMENTS:
       return action.assignments
+    case CLEAR_ASSIGNMENTS:
+      return defaultassignments
     default:
       return state
   }

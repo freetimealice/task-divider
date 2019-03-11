@@ -1,18 +1,19 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {addTask, fetchTasks, deleteTask, fetchLatestWeek} from '../store/task'
+import {clearAssignments} from '../store/ranking'
 
 class AddTasks extends React.Component {
   constructor() {
     super()
     this.state = {
-      fetchedinfo: false,
       value: '',
       renderAgain: false
     }
   }
 
   componentDidMount() {
+    this.props.clearAssignments()
     if (this.props.account.id) {
       this.props.fetchLatestWeek(this.props.account.id)
     }
@@ -130,7 +131,8 @@ class AddTasks extends React.Component {
 const mapStateToProps = state => ({
   account: state.account,
   tasks: state.tasks,
-  week: state.week
+  week: state.week,
+  assignments: state.assignments
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -145,6 +147,10 @@ const mapDispatchToProps = dispatch => ({
   },
   deleteTask: (accountId, taskId) => {
     dispatch(deleteTask(accountId, taskId))
+  },
+  clearAssignments: () => {
+    console.log('clearing assignments')
+    dispatch(clearAssignments())
   }
 })
 

@@ -125,7 +125,7 @@ class Upload extends React.Component {
     return (
       <div>
         <button type="submit" id={`authorize_button${this.props.userNum}`}>
-          Authorize & add chores!
+          Login to Google Tasks!
         </button>
 
         <div>

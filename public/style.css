@@ -4,7 +4,54 @@ body {
   flex-direction: column;
 }
 
-a {
+.move-left {
+  position: relative;
+  animation: moveleft 1s;
+  padding: 20px;
+  margin: 20px;
+  width: 300px;
+  animation-fill-mode: forwards;
+}
+
+.move-right {
+  position: relative;
+  animation: moveright 1s;
+  padding: 20px;
+  margin: 20px;
+  width: 300px;
+  animation-fill-mode: forwards;
+}
+
+@keyframes moveleft {
+  from {
+    left: 0%;
+  }
+  to {
+    left: 20%;
+  }
+}
+
+@keyframes moveright {
+  from {
+    left: 0;
+  }
+  to {
+    left: 70%;
+  }
+}
+
+.user-sections {
+  display: flex;
+  flex: column;
+  justify-content: space-around;
+}
+
+.pieChart {
+  margin-right: 100px;
+}
+a,
+a:visited {
+  color: black;
   text-decoration: none;
 }
 
@@ -80,5 +127,12 @@ form div {
 .userDetails {
   display: flex;
   justify-content: space-around;
-  align-items: flex-start;
+  align-items: center;
+  border: solid gray;
+  border-radius: 25px;
+  padding: 20px;
+}
+
+.historical-data {
+  margin-right: 50px;
 }

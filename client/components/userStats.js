@@ -37,10 +37,12 @@ const UserStats = props => {
     }
   }
   let data = calcValue()
+
   const userNum = props.match.params.userNum
   return props.account && !(data === undefined) ? (
     <div className="container">
-      <h1 className="center-align"> User {userNum} Details</h1>
+      <h2 className="center-align"> User {userNum} Details</h2>
+      <h4>Past Chores Assigned</h4>
       <div className="userDetails">
         <PieChart
           data={data}
@@ -49,14 +51,54 @@ const UserStats = props => {
           innerRadius={150}
           outerRadius={250}
         />
-        <div className="assignments">
-          {data.map(currData => (
-            <div key={currData.name}>
-              Chore Name: {currData.name} minutes<br />
-              Total Time Spent: {currData.totalTime}minutes<br />
-            </div>
-          ))}
-        </div>
+
+        <table className="historical-data">
+          <thead>
+            <tr>
+              <th>Chore Name</th>
+              <th>Total Time Spent (mins)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map(currData => (
+              <tr key={currData.name}>
+                <td>{currData.name}</td>
+                <td>{currData.totalTime}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <br />
+      <h4> Most Recent Week's Chores (Week {`${props.week}`})</h4>
+      <div className="userDetails">
+        <table className="historical-data">
+          <thead>
+            <tr>
+              <th>Chore Name</th>
+              <th>Frequency</th>
+              <th>Duration</th>
+              <th>Total Time</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {props.assignments[`UserNum: ${userNum}`]
+              .filter(task => task.week === props.week)
+              .map(currTask => {
+                const {name, frequency, duration, totalTime, notes} = currTask
+                return (
+                  <tr key={name}>
+                    <td>{name}</td>
+                    <td>{frequency}</td>
+                    <td>{duration}</td>
+                    <td>{totalTime}</td>
+                    <td>{notes}</td>
+                  </tr>
+                )
+              })}
+          </tbody>
+        </table>
       </div>
     </div>
   ) : (

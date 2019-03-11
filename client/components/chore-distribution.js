@@ -143,83 +143,71 @@ const ChoreDistribution = props => {
       console.log('winner is', winner)
     }
   }
+
+  const calcClassName = taskName => {
+    let tasks = props.assignments[`UserNum: 1`].filter(task => {
+      return task.name === taskName
+    })
+    return tasks.length > 0 ? 'move-left' : 'move-right'
+  }
+  console.log('rendering', props.assignments)
   return props.week ? (
     <div className="container">
       <h1 className="center-align"> Which chores will you win?</h1>
       <div className="center-align">
-        {props.tasks.map(task => {
-          return (
-            <div className="row" key={task.name}>
-              <div className="col s4" />
-              <div className="col s4">
-                <div className="card amber">
-                  <div className="card-content white-text">
-                    <span className="card-title">{task.name}</span>
-                    Total Time!: {task.totalTime}
-                  </div>
-                </div>
-              </div>
-              <div className="col s4" />
-            </div>
-          )
-        })}
-        <button type="submit" onClick={submitHandler}>
-          Roll roll roll!
+        <button
+          className="btn waves-effect waves-light right-align unveil"
+          type="submit"
+          onClick={submitHandler}
+        >
+          1. Roll roll roll!
         </button>
         <button
+          className="btn waves-effect waves-light right-align unveil"
           type="submit"
           onClick={() => {
             props.fetchAssignments(props.account.id, props.week)
           }}
         >
-          Unveil!
+          2. Unveil!
         </button>
       </div>
-      <div className="users-container">
-        {props.assignments[`UserNum: 1`] ? (
-          <div className="user1">
-            <h3>User 1</h3>
-            Total Time:{' '}
-            {props.assignments[`UserNum: 1`].reduce((total, task) => {
-              total = total + task.totalTime
-              return total
-            }, 0)}
-            {props.assignments[`UserNum: 1`].map(assignment => {
-              return (
-                <div key={assignment.name} className="assignment">
-                  <div>Assignment: {assignment.name}</div>
-                  <div>Notes: {assignment.notes} </div>
-                  <div>Total Time: {assignment.totalTime} </div>
-                </div>
-              )
-            })}
-            <GoogleTask assignments={props.assignments} userNum={1} />
-          </div>
-        ) : (
-          <p />
-        )}
 
-        {props.assignments[`UserNum: 2`] ? (
-          <div className="user2">
-            <h3>User 2</h3>
-            Total Time:{' '}
-            {props.assignments[`UserNum: 2`].reduce((total, task) => {
-              total = total + task.totalTime
-              return total
-            }, 0)}
-            {props.assignments[`UserNum: 2`].map(assignment => {
-              return (
-                <div key={assignment.name} className="assignment">
-                  <div>Assignment: {assignment.name}</div>
-                  <div>Notes: {assignment.notes} </div>
-                  <div>Total Time: {assignment.totalTime} </div>
-                </div>
-              )
-            })}
-            <GoogleTask assignments={props.assignments} userNum={2} />
+      <div className="trial">
+        <div className="user-sections">
+          <div>
+            <div className="user1-section">
+              <h4>User 1</h4>
+            </div>
+            <div className="user1-section">
+              <GoogleTask assignments={props.assignments} userNum={1} />
+            </div>
           </div>
+          <div>
+            <div className="user2-section">
+              <h4>User 2</h4>
+            </div>
+            <div className="user2-section">
+              <GoogleTask assignments={props.assignments} userNum={2} />
+            </div>
+          </div>
+        </div>
+
+        {props.assignments[`UserNum: 1`] &&
+        props.assignments[`UserNum: 1`].length > 0 ? (
+          props.tasks.map(task => {
+            let moveDirection = calcClassName(task.name)
+            return (
+              <div className={`card amber ${moveDirection}`} key={task.name}>
+                <div className="card-content white-text">
+                  <span className="card-title">{task.name}</span>
+                  Total Time: {task.totalTime}
+                </div>
+              </div>
+            )
+          })
         ) : (
-          <p />
+          <div />
         )}
       </div>
     </div>
@@ -249,6 +237,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(saveAssignment(taskId, winnerUserNum))
   },
   fetchAssignments: (accountId, week) => {
+    console.log('fetching assignment!!!')
     dispatch(fetchAssignments(accountId, week))
   }
 })
