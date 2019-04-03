@@ -15,3 +15,10 @@ Randomness: It's no fun without a bit of randomness involved! May luck be on you
 You have the option to save your chores to your Google Tasks, making it easy to keep track of your to-dos.
 
 For reminders of your weekly chore, navigate to your personal user page. That page visualizes which chores you spend the most time on, across ALL weeks. Separately, you can also see the chores you've been assigned for the latest week.
+
+Installation
+1. Clone this repo to your local machine
+2. Install packages: 'npm i'
+
+Usage
+1. Start server: 'npm run start-dev'
