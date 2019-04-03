@@ -1,3 +1,5 @@
+Chore Counselor
+
 No one looks forward to cleaning the toilet bowl or scrubbing the bathtub, but we can at least make it fun by instilling a bit of luck and fairness into your chore assignment system.
 
 This app is meant to be played between two users who share responsibilities.
